@@ -1,0 +1,7 @@
+- [ ] Add root route, layout, header
+- [x] Add frontend framework (Tailwind CSS)
+- [ ] Create UrlsController, routes (:new, :create, :show)
+- [ ] UrlController#new, with view
+- [ ] UrlController#create
+- [ ] UrlController#show, with view
+- [ ] Add redirect route
