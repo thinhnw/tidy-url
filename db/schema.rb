@@ -10,11 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_29_082422) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_29_090837) do
   create_table "urls", force: :cascade do |t|
-    t.string "original"
-    t.string "shortened"
+    t.string "original", null: false
+    t.string "shortened", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["shortened"], name: "index_urls_on_shortened", unique: true
   end
 end
