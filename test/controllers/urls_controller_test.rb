@@ -17,7 +17,7 @@ class UrlsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create url" do
     assert_difference("Url.count") do
-      post urls_url, params: { url: { original: @url.original } }
+      post urls_url, params: { url: { original: "https://example.com" } }
     end
 
     assert_redirected_to url_url(Url.last)

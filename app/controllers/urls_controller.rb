@@ -22,6 +22,10 @@ class UrlsController < ApplicationController
   # POST /urls or /urls.json
   def create
     @url = Url.new(url_params)
+    count = Key.count
+    random_offset = rand(count)
+    key = Key.offset(random_offset).first
+    @url.shortened = key.name
 
     respond_to do |format|
       if @url.save
