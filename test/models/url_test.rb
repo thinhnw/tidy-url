@@ -24,4 +24,20 @@ class UrlTest < ActiveSupport::TestCase
     assert_not url.save, "Saved the URL with duplicate shortened"
     assert_includes url.errors[:shortened], "has already been taken"
   end
+
+  test "should not save URL with invalid original" do
+    invalid_urls = [
+      "not-a-url",            # No scheme
+      "ftp://example.com",    # Unsupported scheme
+      "http//example.com",    # Malformed scheme
+      "http://",              # Missing host
+      "example.com",          # Missing scheme
+      "http:// example.com"  # Space in URL
+    ]
+    invalid_urls.each do |invalid_url|
+      url = Url.new(original: invalid_url, shortened: "short")
+      assert_not url.save, "Saved the URL with an invalid original: #{invalid_url}"
+      assert_includes url.errors[:original], "must be a valid URL"
+    end
+  end
 end

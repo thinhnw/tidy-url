@@ -65,6 +65,6 @@ class UrlsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def url_params
-      params.expect(url: [ :original, :shortened ])
+      params.expect(url: [ :original ])
     end
 end
