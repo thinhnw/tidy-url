@@ -6,7 +6,7 @@ class KeyTest < ActiveSupport::TestCase
     assert_not key.save
   end
   test "should validate uniqueness of name" do
-    key = Key.new(name: "MyString")
+    key = Key.new(name: "oneone")
     assert_not key.save
   end
 end
