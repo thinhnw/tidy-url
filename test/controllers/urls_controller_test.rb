@@ -16,8 +16,10 @@ class UrlsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create url" do
-    assert_difference("Url.count") do
-      post urls_url, params: { url: { original: "https://example.com" } }
+    assert_difference("Url.count", 1, "Url count should increase by 1") do
+      assert_difference("Key.count", -1,  "Key count should decrease by 1") do
+        post urls_url, params: { url: { original: "https://example.com" } }
+      end
     end
 
     assert_redirected_to url_url(Url.last)

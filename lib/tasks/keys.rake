@@ -1,16 +1,20 @@
 namespace :keys do
   desc "TODO"
-  task generate: :environment do
+  task :generate, [ :number ] => :environment do |t, args|
+    number = args[:number].nil? ? 100 : args[:number].to_i
     next_id = (Key.maximum(:id) || 0) + 1
-    (next_id..(next_id + 100000)).each do |id|
-      encoded = fixed_length_base64_encode(id, bytes: 6)
-      Key.create(name: encoded)
-    end
+    keys = (next_id..(next_id + number)).map { |num| { name: to_base62(num, 6) } }
+    Key.insert_all(keys)
   end
-  def fixed_length_base64_encode(number, bytes: 6)
-    # Convert the number to a fixed-length binary representation
-    bin = [ number ].pack("Q>")[-bytes, bytes] # Use 'Q>' for 64-bit big-endian
-    # Base64 encode the binary representation
-    Base64.urlsafe_encode64(bin, padding: false)
+  def to_base62(num, length)
+    characters = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a
+    base = characters.length
+    result = ""
+
+    while num > 0
+      result = characters[num % base] + result
+      num /= base
+    end
+    result.rjust(length, "a")
   end
 end

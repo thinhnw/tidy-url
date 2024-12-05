@@ -12,4 +12,5 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "urls#new"
+  # match "*path", to: "urls#go_to_original", via: :all
 end

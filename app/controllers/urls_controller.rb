@@ -1,5 +1,5 @@
 class UrlsController < ApplicationController
-  before_action :set_url, only: %i[ show edit update destroy ]
+  before_action :set_url, only: %i[ show destroy ]
 
   # GET /urls or /urls.json
   def index
@@ -15,41 +15,44 @@ class UrlsController < ApplicationController
     @url = Url.new
   end
 
-  # GET /urls/1/edit
-  def edit
-  end
+  # # GET /urls/1/edit
+  # def edit
+  # end
 
   # POST /urls or /urls.json
   def create
     @url = Url.new(url_params)
-    count = Key.count
-    random_offset = rand(count)
-    key = Key.offset(random_offset).first
-    @url.shortened = key.name
-
-    respond_to do |format|
+    ActiveRecord::Base.transaction do
+      unless Key.any?
+        @url.errors.add(:base, "No available keys to assign. Please try again later.")
+        raise ActiveRecord::Rollback
+      end
+      key = Key.offset(rand(Key.count)).first
+      @url.shortened = key.name
       if @url.save
-        format.html { redirect_to @url, notice: "Url was successfully created." }
-        format.json { render :show, status: :created, location: @url }
+        key.destroy!
+        redirect_to @url, notice: "Url was successfully created."
+        return
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @url.errors, status: :unprocessable_entity }
+        @url.errors.add(:base, "Failed to save the URL. Please check your input.")
+        raise ActiveRecord::Rollback
       end
     end
+    render :new, status: :unprocessable_entity
   end
 
-  # PATCH/PUT /urls/1 or /urls/1.json
-  def update
-    respond_to do |format|
-      if @url.update(url_params)
-        format.html { redirect_to @url, notice: "Url was successfully updated." }
-        format.json { render :show, status: :ok, location: @url }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @url.errors, status: :unprocessable_entity }
-      end
-    end
-  end
+  # # PATCH/PUT /urls/1 or /urls/1.json
+  # def update
+  #   respond_to do |format|
+  #     if @url.update(url_params)
+  #       format.html { redirect_to @url, notice: "Url was successfully updated." }
+  #       format.json { render :show, status: :ok, location: @url }
+  #     else
+  #       format.html { render :edit, status: :unprocessable_entity }
+  #       format.json { render json: @url.errors, status: :unprocessable_entity }
+  #     end
+  #   end
+  # end
 
   # DELETE /urls/1 or /urls/1.json
   def destroy
@@ -61,6 +64,11 @@ class UrlsController < ApplicationController
     end
   end
 
+  # def go_to_original
+  #   @url = Url.find_by(shortened: params[:path])
+  #   redirect_to @url.original, allow_other_host: true
+  # end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_url
@@ -70,5 +78,23 @@ class UrlsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def url_params
       params.expect(url: [ :original ])
+    end
+    def create_url_with_key(url_params)
+      url = Url.new(url_params)
+
+      ActiveRecord::Base.transaction do
+        raise ActiveRecord::RecordNotFound, "No available keys" unless Key.any?
+        key = Key.offset(rand(Key.count)).first
+
+        url.shortened = key.name
+        key.destroy!
+        url.save!
+      end
+
+      url
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
+      # Handle errors (e.g., log or re-raise for the caller to handle)
+      Rails.logger.error "Transaction failed: #{e.message}"
+      nil
     end
 end
