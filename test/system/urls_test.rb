@@ -7,7 +7,7 @@ class UrlsTest < ApplicationSystemTestCase
 
   test "visiting the index" do
     visit urls_url
-    assert_selector "h1", text: "Urls"
+    assert_selector "h1", text: "URLs"
   end
 
   test "should create url" do

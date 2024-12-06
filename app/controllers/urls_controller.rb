@@ -1,5 +1,10 @@
 class UrlsController < ApplicationController
   before_action :set_url, only: %i[ show destroy ]
+  helper_method :app_url
+
+  def app_url
+    Rails.application.config.app_url
+  end
 
   # GET /urls or /urls.json
   def index
@@ -64,10 +69,10 @@ class UrlsController < ApplicationController
     end
   end
 
-  # def go_to_original
-  #   @url = Url.find_by(shortened: params[:path])
-  #   redirect_to @url.original, allow_other_host: true
-  # end
+  def go_to_original
+    @url = Url.find_by(shortened: params[:path])
+    redirect_to @url.original, allow_other_host: true
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
