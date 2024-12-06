@@ -1,0 +1,38 @@
+# syntax=docker/dockerfile:1
+# A simple Dockerfile for a Rails development environment
+
+# Use a Ruby base image
+FROM ruby:3.3.6
+
+# Set the working directory for the Rails app
+RUN gem install foreman
+WORKDIR /rails
+
+# Install system dependencies (including cron and PostgreSQL client)
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+    curl \
+    libpq-dev \
+    postgresql-client \
+    cron \
+    build-essential \
+    git && \
+    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+
+
+# Install bundler
+RUN gem install bundler
+
+# Copy Gemfile and install gems early for caching
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+# Copy the rest of the app
+COPY . .
+
+# Expose the port for Rails server
+EXPOSE 3000
+
+# Set up the entry command for the development environment
+# CMD ["rails", "server", "-b", "0.0.0.0"]
+CMD ["bin/dev"]

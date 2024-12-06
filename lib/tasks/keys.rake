@@ -1,9 +1,10 @@
 namespace :keys do
   desc "TODO"
   task :generate, [ :number ] => :environment do |t, args|
+    break if Key.count > 100
     number = args[:number].nil? ? 100 : args[:number].to_i
-    next_id = (Key.maximum(:id) || 0) + 1
-    keys = (next_id..(next_id + number)).map { |num| { name: to_base62(num, 6) } }
+    next_id = Key.count + Url.count + 1
+    keys = (next_id..(next_id + number - 1)).map { |num| { name: to_base62(num, 6) } }
     Key.insert_all(keys)
   end
   def to_base62(num, length)

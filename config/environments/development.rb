@@ -71,5 +71,10 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
 
-  Rails.application.config.app_url = "http://localhost:3000"
+  # Enable DNS rebinding protection and other `Host` header attacks.
+  config.hosts = [
+    "tidyurl.thinhnw.site",     # Allow requests from example.com
+    "localhost:3000"
+  ]
+  Rails.application.config.app_url = ENV["RAILS_APP_URL"] || "http://localhost:3000"
 end
