@@ -1,0 +1,47 @@
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      RAILS_ENV: production
+      POSTGRES_HOST: db
+      POSTGRES_DATABASE: tidy_url
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: password
+      SECRET_KEY_BASE: c2290c955bff929be1181e258493ad8b8699549f6679d03df9d1c6faa061c0ca664e85a8db491f56425f0c63c57279e74c716581c78e689e577b9a4888d5711b
+    depends_on:
+      - db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tidyurl.rule=Host(`tidyurl.thinhnw.site`)"  # Replace with your domain
+      - "traefik.http.routers.tidyurl.entrypoints=websecure"
+      - "traefik.http.routers.tidyurl.tls=true"
+      - "traefik.http.routers.tidyurl.tls.certresolver=myresolver"
+      - "traefik.http.services.tidyurl.loadbalancer.server.port=3000"
+      - "traefik.docker.network=traefik_traefik"
+    networks:
+      - traefik_traefik
+      - tidyurl
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - tidyurl
+
+volumes:
+  db-data:
+
+networks:
+  traefik_traefik:
+    external: true
+  tidyurl:
+    driver: bridge
