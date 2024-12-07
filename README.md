@@ -2,6 +2,8 @@
 
 TidyURL is a Ruby on Rails application that allows users to shorten URLs. It provides a simple interface for creating and managing shortened links.
 
+Check out the [Demo](https://tidyurl.thinhnw.site) of the app.
+
 ## Table of Contents
 
 - [Installation](#installation)
