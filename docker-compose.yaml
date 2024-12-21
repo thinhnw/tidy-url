@@ -11,8 +11,6 @@ services:
       - /rails/tmp
     env_file:
       - .env
-    depends_on:
-      - db
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.tidyurl.rule=Host(`tidyurl.thinhnw.site`)"  # Replace with your domain
@@ -38,20 +36,6 @@ services:
     volumes:
       - .:/rails
     user: root
-
-  db:
-    image: postgres:15
-    env_file:
-      - db.env
-    ports:
-      - "5432:5432"
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    networks:
-      - tidyurl
-
-volumes:
-  db-data:
 
 networks:
   traefik_traefik:
