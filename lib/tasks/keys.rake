@@ -1,21 +1,19 @@
 namespace :keys do
   desc "TODO"
-  task :generate, [ :number ] => :environment do |t, args|
+  task :generate, [ :count ] => :environment do |t, args|
     break if Key.count > 100
-    number = args[:number].nil? ? 100 : args[:number].to_i
-    next_id = Key.count + Url.count + 1
-    keys = (next_id..(next_id + number - 1)).map { |num| { name: to_base62(num, 6) } }
-    Key.insert_all(keys)
-  end
-  def to_base62(num, length)
-    characters = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a
-    base = characters.length
-    result = ""
 
-    while num > 0
-      result = characters[num % base] + result
-      num /= base
+    count = args[:count].nil? ? 100 : args[:count].to_i
+    keys = []
+    (1..count).each do
+      loop do
+        key = SecureRandom.urlsafe_base64(3)
+        if !Key.exists?(name: key) && !Url.exists?(shortened: key)
+          keys << { name: key }
+          break
+        end
+      end
     end
-    result.rjust(length, "a")
+    Key.insert_all(keys)
   end
 end
