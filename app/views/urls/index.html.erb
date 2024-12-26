@@ -4,15 +4,15 @@
   <% end %>
   <% content_for :title, "URLs" %>
   <div class="flex items-center justify-between">
-    <h1 class="text-4xl font-bold">URLs</h1>
-    <%= link_to "New url", new_url_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
+    <h1 class="text-4xl font-bold">Shortened URLs</h1>
+    <%= link_to "New", new_url_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
   </div>
   <div id="urls" class="min-w-full">
     <% @urls.each do |url| %>
+      <hr class="mt-4">
       <%= render url %>
       <p>
       </p>
-      <hr class="mt-4">
     <% end %>
   </div>
 </div>
