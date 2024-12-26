@@ -2,7 +2,7 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('turbo:load', () => {
   // Select all the buttons with the class 'copy-button'
   const copyButtons = document.querySelectorAll('.copy-button');
   console.log(copyButtons.length)
